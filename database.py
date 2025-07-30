@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base
