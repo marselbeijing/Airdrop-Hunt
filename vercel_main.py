@@ -1,13 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-import os
 
 app = FastAPI(title="Airdrop Hunter", version="1.0.0")
-
-# Создаем папку static если её нет
-os.makedirs("static", exist_ok=True)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Упрощенный HTML без сложных функций
 SIMPLE_HTML = """
