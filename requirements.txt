@@ -1,0 +1,9 @@
+aiogram
+fastapi
+uvicorn
+psycopg2-binary
+selenium
+tweepy
+undetected-chromedriver
+python-gnupg
+sqlalchemy 

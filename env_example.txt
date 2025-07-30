@@ -1,0 +1,60 @@
+# 🔑 API КЛЮЧИ ДЛЯ AIRDROP HUNTER
+# Скопируйте этот файл в .env и заполните вашими ключами
+
+# ========================================
+# TELEGRAM BOT (ОБЯЗАТЕЛЬНО)
+# ========================================
+# Получите у @BotFather в Telegram
+BOT_TOKEN=ваш_токен_бота_здесь
+
+# ========================================
+# COINMARKETCAP API (ОБЯЗАТЕЛЬНО)
+# ========================================
+# Получите на https://coinmarketcap.com/api/
+COINMARKETCAP_API_KEY=ваш_coinmarketcap_ключ_здесь
+
+# ========================================
+# TWITTER API (РЕКОМЕНДУЕТСЯ)
+# ========================================
+# Получите на https://developer.twitter.com/
+TWITTER_CONSUMER_KEY=ваш_twitter_consumer_key_здесь
+TWITTER_CONSUMER_SECRET=ваш_twitter_consumer_secret_здесь
+TWITTER_ACCESS_TOKEN=ваш_twitter_access_token_здесь
+TWITTER_ACCESS_TOKEN_SECRET=ваш_twitter_access_token_secret_здесь
+
+# ========================================
+# АДМИНИСТРАТОР
+# ========================================
+# Ваш Telegram ID (получите у @userinfobot)
+ADMIN_ID=ваш_telegram_id_здесь
+
+# ========================================
+# БАЗА ДАННЫХ
+# ========================================
+# SQLite для разработки (не меняйте)
+DATABASE_URL=sqlite:///./airdrop_hunter.db
+
+# ========================================
+# SELENIUM (АВТОМАТИЗАЦИЯ)
+# ========================================
+# Путь к ChromeDriver (обычно не нужно менять)
+SELENIUM_WEBDRIVER_PATH=/usr/local/bin/chromedriver
+SCREENSHOTS_DIR=./screenshots
+
+# ========================================
+# PGP ШИФРОВАНИЕ (ОПЦИОНАЛЬНО)
+# ========================================
+# Email для PGP шифрования
+PGP_RECIPIENT_EMAIL=ваш_email@example.com
+GPG_HOME_DIR=~/.gnupg
+
+# ========================================
+# ПРИМЕРЫ ЗАПОЛНЕНИЯ:
+# ========================================
+# BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+# COINMARKETCAP_API_KEY=12345678-1234-1234-1234-123456789abc
+# TWITTER_CONSUMER_KEY=abcdefghijklmnop
+# TWITTER_CONSUMER_SECRET=abcdefghijklmnopqrstuvwxyz123456789
+# TWITTER_ACCESS_TOKEN=123456789-abcdefghijklmnopqrstuvwxyz
+# TWITTER_ACCESS_TOKEN_SECRET=abcdefghijklmnopqrstuvwxyz123456789
+# ADMIN_ID=123456789 
