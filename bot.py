@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from sqlalchemy.orm import Session
 from database import SessionLocal, User, Airdrop, NftBadge, encrypt_data, decrypt_data
-from airdrop_parser import fetch_airdrops_from_coinmarketcap, save_airdrops_to_db
+from airdrop_parser import fetch_all_airdrops, save_airdrops_to_database
 from task_executor import follow_twitter_account, join_telegram_channel, register_on_website, take_screenshot
 from config import BOT_TOKEN, ADMIN_ID, FREE_USER_AIRDROP_LIMIT
 import random
@@ -279,8 +279,8 @@ async def parse_airdrops_command(message: Message):
         await message.answer("🔄 Запускаю парсинг аирдропов...")
         
         # Получаем реальные данные
-        airdrops = fetch_airdrops_from_coinmarketcap()
-        save_airdrops_to_db(airdrops, is_moderated=True)
+        airdrops = fetch_all_airdrops()
+        save_airdrops_to_database(airdrops)
         
         await message.answer(f"✅ Парсинг завершен! Добавлено {len(airdrops)} аирдропов")
         

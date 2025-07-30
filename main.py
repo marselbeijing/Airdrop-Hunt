@@ -1270,6 +1270,7 @@ async def get_airdrops():
                 "reward": airdrop.reward,
                 "status": airdrop.status,
                 "source_url": airdrop.source_url,
+                "referral_link": airdrop.referral_link,
                 "is_moderated": airdrop.is_moderated
             })
         

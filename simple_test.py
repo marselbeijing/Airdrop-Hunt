@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 """
-🧪 Тестирование API для Airdrop Hunter
+🧪 Простой тест API для Airdrop Hunter
 """
 
-import os
-import asyncio
 import requests
 import tweepy
-from aiogram import Bot
 from config import (
-    COINMARKETCAP_API_KEY, 
     TWITTER_CONSUMER_KEY, 
     TWITTER_CONSUMER_SECRET,
     TWITTER_ACCESS_TOKEN,
@@ -17,34 +13,33 @@ from config import (
     BOT_TOKEN
 )
 
-def test_coinmarketcap_api():
-    """Тест CoinMarketCap API"""
-    print("🔍 Тестирование CoinMarketCap API...")
+def test_telegram_bot():
+    """Тест Telegram Bot API через HTTP"""
+    print("📱 Тестирование Telegram Bot API...")
     
-    if COINMARKETCAP_API_KEY == "YOUR_COINMARKETCAP_API_KEY":
-        print("❌ API ключ не настроен")
+    if BOT_TOKEN == "YOUR_BOT_TOKEN":
+        print("❌ Токен бота не настроен")
         return False
     
     try:
-        url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/airdrops"
-        headers = {
-            'X-CMC_PRO_API_KEY': COINMARKETCAP_API_KEY,
-            'Accept': 'application/json'
-        }
-        
-        response = requests.get(url, headers=headers)
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
+        response = requests.get(url)
         
         if response.status_code == 200:
             data = response.json()
-            airdrops_count = len(data.get('data', []))
-            print(f"✅ CoinMarketCap API работает! Найдено аирдропов: {airdrops_count}")
-            return True
+            if data.get('ok'):
+                bot_info = data['result']
+                print(f"✅ Telegram Bot API работает! Бот: @{bot_info['username']}")
+                return True
+            else:
+                print(f"❌ Ошибка Telegram API: {data}")
+                return False
         else:
-            print(f"❌ Ошибка API: {response.status_code} - {response.text}")
+            print(f"❌ HTTP ошибка: {response.status_code}")
             return False
             
     except Exception as e:
-        print(f"❌ Ошибка при тестировании CoinMarketCap API: {e}")
+        print(f"❌ Ошибка при тестировании Telegram Bot API: {e}")
         return False
 
 def test_twitter_api():
@@ -69,25 +64,6 @@ def test_twitter_api():
         return False
     except Exception as e:
         print(f"❌ Ошибка при тестировании Twitter API: {e}")
-        return False
-
-async def test_telegram_bot():
-    """Тест Telegram Bot API"""
-    print("📱 Тестирование Telegram Bot API...")
-    
-    if BOT_TOKEN == "YOUR_BOT_TOKEN":
-        print("❌ Токен бота не настроен")
-        return False
-    
-    try:
-        bot = Bot(token=BOT_TOKEN)
-        me = await bot.get_me()
-        print(f"✅ Telegram Bot API работает! Бот: @{me.username}")
-        await bot.session.close()
-        return True
-        
-    except Exception as e:
-        print(f"❌ Ошибка при тестировании Telegram Bot API: {e}")
         return False
 
 def test_database():
@@ -138,14 +114,13 @@ def test_selenium():
         print(f"❌ Ошибка при тестировании Selenium: {e}")
         return False
 
-async def main():
+def main():
     """Основная функция тестирования"""
     print("🧪 Запуск тестирования API...\n")
     
     results = {
-        "CoinMarketCap": test_coinmarketcap_api(),
         "Twitter": test_twitter_api(),
-        "Telegram": await test_telegram_bot(),
+        "Telegram": test_telegram_bot(),
         "Database": test_database(),
         "Selenium": test_selenium()
     }
@@ -171,4 +146,4 @@ async def main():
         print("❌ Ни один API не работает. Проверьте настройки.")
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    main() 

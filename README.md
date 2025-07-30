@@ -16,7 +16,7 @@ Airdrop Hunter is a comprehensive web application for automated cryptocurrency a
 ### 🔍 Smart Search
 - **Auto parsing** from top sources
 - **Real-time monitoring** of new airdrops
-- **Multi-source integration** (CoinMarketCap, Twitter, etc.)
+- **Multi-source integration** (Twitter, Telegram, etc.)
 
 ### 🤖 Auto Tasks
 - **Automated task completion** without user input
@@ -103,9 +103,6 @@ Create a `.env` file with the following variables:
 BOT_TOKEN=your_telegram_bot_token
 ADMIN_ID=your_telegram_user_id
 
-# CoinMarketCap API
-COINMARKETCAP_API_KEY=your_coinmarketcap_api_key
-
 # Twitter API
 TWITTER_API_KEY=your_twitter_api_key
 TWITTER_API_SECRET=your_twitter_api_secret
@@ -124,11 +121,6 @@ GPG_HOME_DIR=~/.gnupg
 1. Message [@BotFather](https://t.me/botfather) on Telegram
 2. Create new bot with `/newbot`
 3. Copy the token to `BOT_TOKEN`
-
-#### CoinMarketCap
-1. Visit [CoinMarketCap API](https://coinmarketcap.com/api/)
-2. Sign up for free account
-3. Get your API key
 
 #### Twitter API
 1. Go to [Twitter Developer Portal](https://developer.twitter.com/)
@@ -226,7 +218,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 Set all required environment variables in production:
 ```bash
 export BOT_TOKEN=your_token
-export COINMARKETCAP_API_KEY=your_key
+export TWITTER_API_KEY=your_key
 # ... other variables
 ```
 

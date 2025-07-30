@@ -8,12 +8,6 @@
 BOT_TOKEN=ваш_токен_бота_здесь
 
 # ========================================
-# COINMARKETCAP API (ОБЯЗАТЕЛЬНО)
-# ========================================
-# Получите на https://coinmarketcap.com/api/
-COINMARKETCAP_API_KEY=ваш_coinmarketcap_ключ_здесь
-
-# ========================================
 # TWITTER API (РЕКОМЕНДУЕТСЯ)
 # ========================================
 # Получите на https://developer.twitter.com/
@@ -52,7 +46,6 @@ GPG_HOME_DIR=~/.gnupg
 # ПРИМЕРЫ ЗАПОЛНЕНИЯ:
 # ========================================
 # BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
-# COINMARKETCAP_API_KEY=12345678-1234-1234-1234-123456789abc
 # TWITTER_CONSUMER_KEY=abcdefghijklmnop
 # TWITTER_CONSUMER_SECRET=abcdefghijklmnopqrstuvwxyz123456789
 # TWITTER_ACCESS_TOKEN=123456789-abcdefghijklmnopqrstuvwxyz

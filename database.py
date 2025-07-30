@@ -87,6 +87,7 @@ class Airdrop(Base):
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     source_url = Column(String, unique=True, nullable=False)
+    referral_link = Column(String, nullable=True)  # Реферальная ссылка
     blockchain = Column(String, nullable=True)
     difficulty = Column(String, nullable=True)
     status = Column(String, default="new")
