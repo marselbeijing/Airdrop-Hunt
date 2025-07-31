@@ -995,7 +995,10 @@ MAIN_HTML = """
             });
             
             // Add active class to clicked item
-            event.target.closest('.nav-item').classList.add('active');
+            const clickedItem = event.target.closest('.nav-item');
+            if (clickedItem) {
+                clickedItem.classList.add('active');
+            }
         }
 
         function loadProfileData() {
@@ -1144,6 +1147,78 @@ MAIN_HTML = """
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
+            
+            // Initialize scroll animations
+            const scrollElements = document.querySelectorAll('.scroll-animate');
+            scrollElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Add loading animation
+            setTimeout(() => {
+                const loadingElement = document.querySelector('.loading');
+                if (loadingElement) {
+                    loadingElement.style.opacity = '1';
+                }
+            }, 100);
+        });
+        
+        // Additional utility functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        function updateStats() {
+            // Update statistics in real-time
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.stat-title').textContent;
+                    showNotification(`Clicked: ${title}`, 'info');
+                });
+            });
+        }
+        
+        function initializeFeatures() {
+            // Initialize all interactive features
+            updateStats();
+            
+            // Add hover effects
+            const cards = document.querySelectorAll('.feature-card, .stat-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+        
+        // Call initialization functions
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            initializeFeatures();
         });
     </script>
 </body>
@@ -1190,4 +1265,93 @@ async def parse_airdrops():
 @app.get("/api/auth/telegram")
 async def telegram_auth():
     """Telegram OAuth callback"""
-    return {"status": "success", "message": "Telegram auth callback"} 
+    return {"status": "success", "message": "Telegram auth callback"}
+
+@app.get("/api/tasks")
+async def get_tasks():
+    """Получить список заданий"""
+    return {
+        "status": "success",
+        "tasks": [
+            {
+                "id": 1,
+                "title": "Follow Twitter Account",
+                "description": "Follow the official project Twitter account",
+                "type": "social",
+                "status": "completed",
+                "reward": "50 $HUNT",
+                "completed_at": "2024-01-15T10:30:00Z"
+            },
+            {
+                "id": 2,
+                "title": "Join Telegram Channel",
+                "description": "Join the official Telegram community",
+                "type": "social",
+                "status": "pending",
+                "reward": "75 $HUNT",
+                "completed_at": None
+            },
+            {
+                "id": 3,
+                "title": "Website Registration",
+                "description": "Register on the project website",
+                "type": "registration",
+                "status": "completed",
+                "reward": "100 $HUNT",
+                "completed_at": "2024-01-14T15:45:00Z"
+            }
+        ]
+    }
+
+@app.get("/api/wallet/balance")
+async def get_wallet_balance():
+    """Получить баланс кошелька"""
+    return {
+        "status": "success",
+        "balance": {
+            "HUNT": 450,
+            "ETH": 0.025,
+            "TON": 0.0,
+            "SOL": 0.0
+        }
+    }
+
+@app.post("/api/wallet/withdraw")
+async def withdraw_tokens(request: Request):
+    """Вывод токенов"""
+    return {
+        "status": "success",
+        "message": "Withdrawal request submitted successfully",
+        "transaction_id": "tx_123456789"
+    }
+
+@app.get("/api/profile")
+async def get_profile():
+    """Получить профиль пользователя"""
+    return {
+        "status": "success",
+        "profile": {
+            "id": 123456789,
+            "username": "demo_user",
+            "first_name": "Demo",
+            "last_name": "User",
+            "rating": 1250,
+            "tokens": 450,
+            "completed_tasks": 25,
+            "pending_tasks": 8,
+            "rank": "Top 15%"
+        }
+    }
+
+@app.get("/api/parse-status")
+async def get_parse_status():
+    """Получить статус парсинга"""
+    return {
+        "status": "success",
+        "parse_status": {
+            "last_parse": "2024-01-15T12:00:00Z",
+            "airdrops_found": 3,
+            "sources": ["AirdropAlert", "Twitter", "ICOdrops"],
+            "next_parse": "2024-01-15T18:00:00Z"
+        }
+    } 
