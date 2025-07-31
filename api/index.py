@@ -5,15 +5,17 @@ from fastapi.responses import HTMLResponse
 app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
+async def root():
     return """
     <!DOCTYPE html>
     <html>
     <head>
         <title>Airdrop Hunter</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            body { 
-                font-family: Arial, sans-serif; 
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
                 color: white;
                 margin: 0;
@@ -26,11 +28,16 @@ async def read_root():
             .container {
                 text-align: center;
                 max-width: 400px;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 40px;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
             .logo {
                 font-size: 2.5rem;
                 font-weight: bold;
-                margin-bottom: 10px;
+                margin-bottom: 20px;
                 background: linear-gradient(45deg, #6366f1, #8b5cf6);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -42,6 +49,7 @@ async def read_root():
                 border-radius: 20px;
                 display: inline-block;
                 margin: 20px 0;
+                font-weight: 600;
             }
             .btn {
                 background: #6366f1;
@@ -53,6 +61,12 @@ async def read_root():
                 display: inline-block;
                 margin: 10px;
                 cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            .btn:hover {
+                background: #4f46e5;
+                transform: translateY(-2px);
             }
         </style>
     </head>
@@ -68,5 +82,5 @@ async def read_root():
     """
 
 @app.get("/health")
-async def health_check():
+async def health():
     return {"status": "healthy", "service": "airdrop-hunter"} 
