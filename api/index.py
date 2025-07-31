@@ -524,34 +524,7 @@ MAIN_HTML = """
                 </div>
             </div>
             
-            <!-- Auth Section -->
-            <div id="auth-section" class="auth-section">
-                <h3>🔐 Авторизация через Telegram</h3>
-                <p style="margin: 12px 0; color: var(--gray-light); font-size: 0.9rem;">
-                    Войдите через Telegram для доступа к полному функционалу
-                </p>
-                <a href="#" class="auth-button" onclick="initTelegramAuth()">
-                    <i class="fab fa-telegram"></i>
-                    Войти через Telegram
-                </a>
-            </div>
-            
-            <!-- User Profile -->
-            <div id="user-profile" class="user-profile">
-                <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
-                <div id="user-name" class="user-name"></div>
-                <div id="user-username" class="user-username"></div>
-                <div class="user-stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="user-rating">0</div>
-                        <div class="stat-label">Рейтинг</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="user-tokens">0</div>
-                        <div class="stat-label">$HUNT</div>
-                    </div>
-                </div>
-            </div>
+
             
             <!-- Stats Grid -->
             <div class="stats-grid scroll-animate">
@@ -703,6 +676,7 @@ MAIN_HTML = """
                 // User is already authorized
                 user = tg.initDataUnsafe.user;
                 showUserProfile();
+                loadProfileData();
             } else {
                 // Redirect to Telegram for authorization
                 const authUrl = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_USERNAME}&request_access=write&origin=${encodeURIComponent(window.location.origin)}`;
@@ -713,17 +687,10 @@ MAIN_HTML = """
         // Show user profile after authorization
         function showUserProfile() {
             if (user) {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('user-profile').style.display = 'block';
-                
-                // Update user info
-                document.getElementById('user-avatar').src = user.photo_url || 'https://via.placeholder.com/60';
-                document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-                document.getElementById('user-username').textContent = '@' + (user.username || 'user');
-                
-                // Update stats (mock data for now)
-                document.getElementById('user-rating').textContent = '1250';
-                document.getElementById('user-tokens').textContent = '450';
+                // Update profile data if we're on profile page
+                if (document.getElementById('profile-content').classList.contains('active')) {
+                    loadProfileData();
+                }
             }
         }
         
@@ -731,7 +698,6 @@ MAIN_HTML = """
         function checkAuth() {
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 user = tg.initDataUnsafe.user;
-                showUserProfile();
             }
         }
         
@@ -873,7 +839,9 @@ MAIN_HTML = """
                 profileDetails.innerHTML = `
                     <div class="auth-section">
                         <h3>🔐 Авторизация через Telegram</h3>
-                        <p>Войдите через Telegram для доступа к профилю</p>
+                        <p style="margin: 12px 0; color: var(--gray-light); font-size: 0.9rem;">
+                            Войдите через Telegram для доступа к профилю
+                        </p>
                         <button class="auth-button" onclick="initTelegramAuth()">
                             <i class="fab fa-telegram"></i>
                             Войти через Telegram
@@ -886,7 +854,7 @@ MAIN_HTML = """
         function logout() {
             user = null;
             localStorage.removeItem('telegram_user');
-            showHome();
+            loadProfileData();
             alert('Вы вышли из аккаунта');
         }
 
