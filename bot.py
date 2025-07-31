@@ -68,6 +68,7 @@ async def start_command(message: Message):
 /leaderboard - Топ игроков
 /my_tokens - Ваши токены $HUNT
 /subscribe - Premium подписка
+/app - Открыть веб-приложение
 
 💡 Начните с команды /airdrops!
             """
@@ -83,7 +84,15 @@ async def start_command(message: Message):
 🔍 Используйте /airdrops для поиска новых аирдропов!
             """
         
-        await message.answer(welcome_text)
+        # Создаем кнопку для открытия приложения
+        keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
+            [types.InlineKeyboardButton(
+                text="🌐 Открыть приложение",
+                url="https://airdrop-hunt-eight.vercel.app/"
+            )]
+        ])
+        
+        await message.answer(welcome_text, reply_markup=keyboard)
         
     except Exception as e:
         await message.answer("❌ Ошибка при регистрации. Попробуйте позже.")
@@ -113,7 +122,15 @@ async def airdrops_command(message: Message):
         
         response += "💡 Используйте /do_airdrop <ID> для выполнения задания"
         
-        await message.answer(response, parse_mode="HTML", disable_web_page_preview=True)
+        # Создаем кнопку для открытия приложения
+        keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
+            [types.InlineKeyboardButton(
+                text="🌐 Открыть приложение",
+                url="https://airdrop-hunt-eight.vercel.app/"
+            )]
+        ])
+        
+        await message.answer(response, parse_mode="HTML", disable_web_page_preview=True, reply_markup=keyboard)
         
     except Exception as e:
         await message.answer("❌ Ошибка при получении аирдропов")
@@ -286,6 +303,21 @@ async def parse_airdrops_command(message: Message):
         
     except Exception as e:
         await message.answer(f"❌ Ошибка при парсинге: {e}")
+
+@dp.message(Command("app"))
+async def app_command(message: Message):
+    """Открыть веб-приложение"""
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
+        [types.InlineKeyboardButton(
+            text="🌐 Открыть Airdrop Hunter",
+            url="https://airdrop-hunt-eight.vercel.app/"
+        )]
+    ])
+    
+    await message.answer(
+        "🚀 Откройте веб-приложение Airdrop Hunter для полного функционала!",
+        reply_markup=keyboard
+    )
 
 async def main():
     """Запуск бота"""
