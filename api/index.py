@@ -515,7 +515,7 @@ MAIN_HTML = """
             <div class="header loading">
                 <div class="logo">
                     <i class="fas fa-rocket"></i>
-                    Airdrop Hunter
+                    Airdrop Hunt
                 </div>
                 <p class="subtitle">Automated crypto airdrop hunting with smart task execution</p>
                 <div class="status-badge">
