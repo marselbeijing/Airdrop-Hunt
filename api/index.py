@@ -110,9 +110,9 @@ MAIN_HTML = """
         }
         
         .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -121,55 +121,6 @@ MAIN_HTML = """
             align-items: center;
             justify-content: center;
             gap: 12px;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            letter-spacing: 2px;
-            position: relative;
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-        
-        .logo::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120%;
-            height: 120%;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            filter: blur(20px);
-            z-index: -1;
-        }
-        
-        @keyframes glow {
-            from {
-                filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
-            }
-            to {
-                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
-            }
-        }
-        
-        .logo-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            position: relative;
-        }
-        
-        .logo-text::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            filter: blur(1px);
-            z-index: -1;
         }
         
         .logo i {
@@ -564,7 +515,7 @@ MAIN_HTML = """
             <div class="header loading">
                 <div class="logo">
                     <i class="fas fa-rocket"></i>
-                    <span class="logo-text">Airdrop Hunter</span>
+                    Airdrop Hunter
                 </div>
                 <p class="subtitle">Automated crypto airdrop hunting with smart task execution</p>
                 <div class="status-badge">
@@ -716,44 +667,45 @@ MAIN_HTML = """
     
     <script>
         // Telegram Web App initialization
-        let tg = window.Telegram.WebApp;
+        let tg = null;
         let user = null;
+        const TELEGRAM_BOT_USERNAME = "airdrophunter_bot";
+        
+        // Initialize Telegram WebApp
+        try {
+            tg = window.Telegram.WebApp;
+            if (tg) {
+                tg.ready();
+            }
+        } catch (error) {
+            console.log('Telegram WebApp not available:', error);
+        }
         
         // Initialize Telegram Web App
         function initTelegramAuth() {
-            // Check if we're in Telegram Web App
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                
-                // If user data is available
+            try {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    // User is already authorized
                     user = tg.initDataUnsafe.user;
                     showUserProfile();
                     loadProfileData();
-                    return;
+                } else {
+                    // For demo purposes, simulate successful auth
+                    user = {
+                        id: 123456789,
+                        first_name: 'Demo',
+                        last_name: 'User',
+                        username: 'demo_user',
+                        photo_url: 'https://via.placeholder.com/60'
+                    };
+                    showUserProfile();
+                    loadProfileData();
+                    alert('✅ Демо авторизация успешна!');
                 }
+            } catch (error) {
+                console.error('Auth error:', error);
+                alert('❌ Ошибка авторизации. Попробуйте еще раз.');
             }
-            
-            // If not in Telegram Web App or no user data, show manual auth
-            showManualAuth();
-        }
-        
-        function showManualAuth() {
-            // Create a simple auth simulation for demo
-            const mockUser = {
-                id: 123456789,
-                first_name: "Demo",
-                last_name: "User",
-                username: "demo_user",
-                photo_url: "https://via.placeholder.com/60/6366f1/ffffff?text=D"
-            };
-            
-            user = mockUser;
-            localStorage.setItem('telegram_user', JSON.stringify(mockUser));
-            showUserProfile();
-            loadProfileData();
-            
-            alert('✅ Демо-авторизация успешна! В реальном приложении здесь будет OAuth через Telegram.');
         }
         
         // Show user profile after authorization
@@ -768,23 +720,12 @@ MAIN_HTML = """
         
         // Check if user is already authorized
         function checkAuth() {
-            // Check Telegram Web App first
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
+            try {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     user = tg.initDataUnsafe.user;
-                    return;
                 }
-            }
-            
-            // Check localStorage for saved user
-            const savedUser = localStorage.getItem('telegram_user');
-            if (savedUser) {
-                try {
-                    user = JSON.parse(savedUser);
-                } catch (e) {
-                    localStorage.removeItem('telegram_user');
-                }
+            } catch (error) {
+                console.log('Telegram WebApp not available:', error);
             }
         }
         
@@ -901,7 +842,7 @@ MAIN_HTML = """
             if (user) {
                 profileDetails.innerHTML = `
                     <div class="user-profile">
-                        <img src="${user.photo_url || 'https://via.placeholder.com/60'}" class="user-avatar" onerror="this.src='https://via.placeholder.com/60/6366f1/ffffff?text=${user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}'">
+                        <img src="${user.photo_url || 'https://via.placeholder.com/60'}" class="user-avatar">
                         <div class="user-name">${user.first_name} ${user.last_name || ''}</div>
                         <div class="user-username">@${user.username || 'user'}</div>
                         <div class="user-stats">
@@ -933,9 +874,6 @@ MAIN_HTML = """
                             <i class="fab fa-telegram"></i>
                             Войти через Telegram
                         </button>
-                        <p style="margin-top: 12px; color: var(--gray-light); font-size: 0.8rem;">
-                            💡 Для демонстрации используется тестовая авторизация
-                        </p>
                     </div>
                 `;
             }
@@ -945,7 +883,7 @@ MAIN_HTML = """
             user = null;
             localStorage.removeItem('telegram_user');
             loadProfileData();
-            alert('✅ Вы вышли из аккаунта');
+            alert('Вы вышли из аккаунта');
         }
 
         // Feature Functions
