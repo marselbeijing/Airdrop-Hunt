@@ -110,9 +110,9 @@ MAIN_HTML = """
         }
         
         .logo {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -121,6 +121,55 @@ MAIN_HTML = """
             align-items: center;
             justify-content: center;
             gap: 12px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+            position: relative;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
+            }
+        }
+        
+        .logo-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+        }
+        
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            filter: blur(1px);
+            z-index: -1;
         }
         
         .logo i {
@@ -515,7 +564,7 @@ MAIN_HTML = """
             <div class="header loading">
                 <div class="logo">
                     <i class="fas fa-rocket"></i>
-                    Airdrop Hunt
+                    <span class="logo-text">Airdrop Hunter</span>
                 </div>
                 <p class="subtitle">Automated crypto airdrop hunting with smart task execution</p>
                 <div class="status-badge">
@@ -611,156 +660,6 @@ MAIN_HTML = """
             <!-- Footer -->
             <div class="footer scroll-animate">
                 <p>&copy; 2024 Airdrop Hunter. All rights reserved.</p>
-            </div>
-        </div>
-        
-        <!-- Airdrops Content -->
-        <div id="airdrops-content" class="content-section">
-            <div class="header">
-                <div class="logo">
-                    <i class="fas fa-gift"></i>
-                    Airdrops
-                </div>
-            </div>
-            
-            <div id="airdrops-list">
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="parseAirdrops()">
-                        <i class="fas fa-sync"></i>
-                        Parse New Airdrops
-                    </button>
-                </div>
-                
-                <div id="airdrops-container">
-                    <!-- Airdrops will be loaded here -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tasks Content -->
-        <div id="tasks-content" class="content-section">
-            <div class="header">
-                <div class="logo">
-                    <i class="fas fa-tasks"></i>
-                    Tasks
-                </div>
-            </div>
-            
-            <div id="tasks-list">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-title">Completed</div>
-                        <div class="stat-desc">25 tasks done</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-title">Pending</div>
-                        <div class="stat-desc">8 tasks waiting</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="stat-title">Rewards</div>
-                        <div class="stat-desc">450 $HUNT earned</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-title">Ranking</div>
-                        <div class="stat-desc">Top 15%</div>
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="showActiveTasks()">
-                        <i class="fas fa-list"></i>
-                        Active Tasks
-                    </button>
-                    <button class="btn btn-secondary" onclick="showCompletedTasks()">
-                        <i class="fas fa-check"></i>
-                        Completed
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Wallet Content -->
-        <div id="wallet-content" class="content-section">
-            <div class="header">
-                <div class="logo">
-                    <i class="fas fa-wallet"></i>
-                    Wallet
-                </div>
-            </div>
-            
-            <div id="wallet-details">
-                <div class="user-profile">
-                    <div class="user-stats">
-                        <div class="stat-item">
-                            <div class="stat-value">$HUNT</div>
-                            <div class="stat-label">450 tokens</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">ETH</div>
-                            <div class="stat-label">0.025 ETH</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="features-grid">
-                    <div class="feature-card" onclick="connectWallet('ethereum')">
-                        <div class="feature-icon">
-                            <i class="fab fa-ethereum"></i>
-                        </div>
-                        <div class="feature-title">Ethereum</div>
-                        <div class="feature-desc">Connect MetaMask</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="connectWallet('ton')">
-                        <div class="feature-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="feature-title">TON</div>
-                        <div class="feature-desc">Connect TON Wallet</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="connectWallet('solana')">
-                        <div class="feature-icon">
-                            <i class="fas fa-sun"></i>
-                        </div>
-                        <div class="feature-title">Solana</div>
-                        <div class="feature-desc">Connect Phantom</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="showSecurity()">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="feature-title">Security</div>
-                        <div class="feature-desc">PGP encryption</div>
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="withdrawTokens()">
-                        <i class="fas fa-arrow-up"></i>
-                        Withdraw
-                    </button>
-                    <button class="btn btn-secondary" onclick="showTransactionHistory()">
-                        <i class="fas fa-history"></i>
-                        History
-                    </button>
-                </div>
             </div>
         </div>
         
@@ -958,18 +857,17 @@ MAIN_HTML = """
 
         function showAirdrops() {
             setActiveNav('airdrops');
-            showContent('airdrops-content');
-            loadAirdrops();
+            alert('🎁 Airdrops page - Browse available airdrops');
         }
 
         function showTasks() {
             setActiveNav('tasks');
-            showContent('tasks-content');
+            alert('📋 Tasks page - Manage your tasks');
         }
 
         function showWallet() {
             setActiveNav('wallet');
-            showContent('wallet-content');
+            alert('💰 Wallet page - Manage your wallets');
         }
 
         function showProfile() {
@@ -995,10 +893,7 @@ MAIN_HTML = """
             });
             
             // Add active class to clicked item
-            const clickedItem = event.target.closest('.nav-item');
-            if (clickedItem) {
-                clickedItem.classList.add('active');
-            }
+            event.target.closest('.nav-item').classList.add('active');
         }
 
         function loadProfileData() {
@@ -1053,72 +948,6 @@ MAIN_HTML = """
             alert('✅ Вы вышли из аккаунта');
         }
 
-        // Airdrops Functions
-        function loadAirdrops() {
-            const container = document.getElementById('airdrops-container');
-            container.innerHTML = `
-                <div class="features-grid">
-                    <div class="feature-card" onclick="executeAirdrop(1)">
-                        <div class="feature-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="feature-title">Example Airdrop</div>
-                        <div class="feature-desc">100 tokens reward</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="executeAirdrop(2)">
-                        <div class="feature-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="feature-title">Test Airdrop</div>
-                        <div class="feature-desc">50 tokens reward</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="executeAirdrop(3)">
-                        <div class="feature-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="feature-title">Demo Airdrop</div>
-                        <div class="feature-desc">75 tokens reward</div>
-                    </div>
-                    
-                    <div class="feature-card" onclick="executeAirdrop(4)">
-                        <div class="feature-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="feature-title">Sample Airdrop</div>
-                        <div class="feature-desc">200 tokens reward</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function executeAirdrop(id) {
-            alert(`🚀 Выполняем аирдроп #${id}...\n✅ Задание выполнено! +100 $HUNT`);
-        }
-
-        // Tasks Functions
-        function showActiveTasks() {
-            alert('📋 Активные задания:\n• Follow Twitter account\n• Join Telegram channel\n• Register on website');
-        }
-
-        function showCompletedTasks() {
-            alert('✅ Выполненные задания:\n• 25 tasks completed\n• 450 $HUNT earned');
-        }
-
-        // Wallet Functions
-        function connectWallet(type) {
-            alert(`🔗 Подключение ${type} кошелька...\n✅ Кошелек подключен!`);
-        }
-
-        function withdrawTokens() {
-            alert('💰 Вывод токенов:\n• Минимум: 100 $HUNT\n• Комиссия: 2%');
-        }
-
-        function showTransactionHistory() {
-            alert('📊 История транзакций:\n• +100 $HUNT (airdrop)\n• +50 $HUNT (task)\n• -25 $HUNT (withdrawal)');
-        }
-
         // Feature Functions
         function showMonetization() {
             alert('💰 Premium features and $HUNT token rewards coming soon!');
@@ -1147,78 +976,6 @@ MAIN_HTML = """
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
-            
-            // Initialize scroll animations
-            const scrollElements = document.querySelectorAll('.scroll-animate');
-            scrollElements.forEach(el => {
-                observer.observe(el);
-            });
-            
-            // Add loading animation
-            setTimeout(() => {
-                const loadingElement = document.querySelector('.loading');
-                if (loadingElement) {
-                    loadingElement.style.opacity = '1';
-                }
-            }, 100);
-        });
-        
-        // Additional utility functions
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                z-index: 10000;
-                font-weight: 600;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-        
-        function updateStats() {
-            // Update statistics in real-time
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const title = this.querySelector('.stat-title').textContent;
-                    showNotification(`Clicked: ${title}`, 'info');
-                });
-            });
-        }
-        
-        function initializeFeatures() {
-            // Initialize all interactive features
-            updateStats();
-            
-            // Add hover effects
-            const cards = document.querySelectorAll('.feature-card, .stat-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-        }
-        
-        // Call initialization functions
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            initializeFeatures();
         });
     </script>
 </body>
@@ -1265,93 +1022,4 @@ async def parse_airdrops():
 @app.get("/api/auth/telegram")
 async def telegram_auth():
     """Telegram OAuth callback"""
-    return {"status": "success", "message": "Telegram auth callback"}
-
-@app.get("/api/tasks")
-async def get_tasks():
-    """Получить список заданий"""
-    return {
-        "status": "success",
-        "tasks": [
-            {
-                "id": 1,
-                "title": "Follow Twitter Account",
-                "description": "Follow the official project Twitter account",
-                "type": "social",
-                "status": "completed",
-                "reward": "50 $HUNT",
-                "completed_at": "2024-01-15T10:30:00Z"
-            },
-            {
-                "id": 2,
-                "title": "Join Telegram Channel",
-                "description": "Join the official Telegram community",
-                "type": "social",
-                "status": "pending",
-                "reward": "75 $HUNT",
-                "completed_at": None
-            },
-            {
-                "id": 3,
-                "title": "Website Registration",
-                "description": "Register on the project website",
-                "type": "registration",
-                "status": "completed",
-                "reward": "100 $HUNT",
-                "completed_at": "2024-01-14T15:45:00Z"
-            }
-        ]
-    }
-
-@app.get("/api/wallet/balance")
-async def get_wallet_balance():
-    """Получить баланс кошелька"""
-    return {
-        "status": "success",
-        "balance": {
-            "HUNT": 450,
-            "ETH": 0.025,
-            "TON": 0.0,
-            "SOL": 0.0
-        }
-    }
-
-@app.post("/api/wallet/withdraw")
-async def withdraw_tokens(request: Request):
-    """Вывод токенов"""
-    return {
-        "status": "success",
-        "message": "Withdrawal request submitted successfully",
-        "transaction_id": "tx_123456789"
-    }
-
-@app.get("/api/profile")
-async def get_profile():
-    """Получить профиль пользователя"""
-    return {
-        "status": "success",
-        "profile": {
-            "id": 123456789,
-            "username": "demo_user",
-            "first_name": "Demo",
-            "last_name": "User",
-            "rating": 1250,
-            "tokens": 450,
-            "completed_tasks": 25,
-            "pending_tasks": 8,
-            "rank": "Top 15%"
-        }
-    }
-
-@app.get("/api/parse-status")
-async def get_parse_status():
-    """Получить статус парсинга"""
-    return {
-        "status": "success",
-        "parse_status": {
-            "last_parse": "2024-01-15T12:00:00Z",
-            "airdrops_found": 3,
-            "sources": ["AirdropAlert", "Twitter", "ICOdrops"],
-            "next_parse": "2024-01-15T18:00:00Z"
-        }
-    } 
+    return {"status": "success", "message": "Telegram auth callback"} 
