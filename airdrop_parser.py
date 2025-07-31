@@ -203,13 +203,30 @@ def fetch_all_airdrops():
     """Получить аирдропы из всех источников"""
     all_airdrops = []
     
-    # Добавляем аирдропы из разных источников
-    all_airdrops.extend(fetch_airdrops_from_coingecko())
-    all_airdrops.extend(fetch_airdrops_from_airdropalert())
-    all_airdrops.extend(fetch_airdrops_from_icodrops())
-    all_airdrops.extend(fetch_airdrops_from_twitter())
-    all_airdrops.extend(fetch_airdrops_from_telegram())
+    print("🔍 Начинаю парсинг аирдропов...")
     
+    # Добавляем аирдропы из разных источников
+    coingecko_airdrops = fetch_airdrops_from_coingecko()
+    print(f"📊 CoinGecko: найдено {len(coingecko_airdrops)} аирдропов")
+    all_airdrops.extend(coingecko_airdrops)
+    
+    airdropalert_airdrops = fetch_airdrops_from_airdropalert()
+    print(f"📊 AirdropAlert: найдено {len(airdropalert_airdrops)} аирдропов")
+    all_airdrops.extend(airdropalert_airdrops)
+    
+    icodrops_airdrops = fetch_airdrops_from_icodrops()
+    print(f"📊 ICOdrops: найдено {len(icodrops_airdrops)} аирдропов")
+    all_airdrops.extend(icodrops_airdrops)
+    
+    twitter_airdrops = fetch_airdrops_from_twitter()
+    print(f"📊 Twitter: найдено {len(twitter_airdrops)} аирдропов")
+    all_airdrops.extend(twitter_airdrops)
+    
+    telegram_airdrops = fetch_airdrops_from_telegram()
+    print(f"📊 Telegram: найдено {len(telegram_airdrops)} аирдропов")
+    all_airdrops.extend(telegram_airdrops)
+    
+    print(f"🎯 Всего найдено: {len(all_airdrops)} аирдропов")
     return all_airdrops
 
 def determine_blockchain(text):
@@ -278,6 +295,7 @@ def create_referral_link(original_url):
 def save_airdrops_to_database(airdrops):
     """Сохранить аирдропы в базу данных"""
     db = SessionLocal()
+    saved_count = 0
     try:
         for airdrop_data in airdrops:
             # Проверяем, не существует ли уже такой аирдроп
@@ -299,12 +317,15 @@ def save_airdrops_to_database(airdrops):
                     is_moderated=True
                 )
                 db.add(airdrop)
+                saved_count += 1
         
         db.commit()
-        print(f"✅ Сохранено {len(airdrops)} новых аирдропов")
+        print(f"✅ Сохранено {saved_count} новых аирдропов")
+        return saved_count
     except Exception as e:
         db.rollback()
         print(f"❌ Ошибка сохранения: {e}")
+        return 0
     finally:
         db.close()
 
