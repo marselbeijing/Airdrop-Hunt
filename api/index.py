@@ -285,10 +285,61 @@ MAIN_HTML = """
             transform: translateY(-1px);
         }
         
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            max-width: 100vw;
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-dark);
+            border-radius: 20px 20px 0 0;
+            padding: 12px 20px 20px;
+            z-index: 1000;
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--gray-light);
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--primary);
+            background: var(--glass);
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+        
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
         /* Footer */
         .footer {
             text-align: center;
-            padding: 20px 0 0;
+            padding: 20px 0 80px;
             color: var(--gray-light);
             font-size: 0.75rem;
         }
@@ -321,6 +372,11 @@ MAIN_HTML = """
             
             .btn {
                 width: 100%;
+            }
+            
+            .bottom-nav {
+                width: 100%;
+                border-radius: 0;
             }
         }
         
@@ -453,6 +509,42 @@ MAIN_HTML = """
         </div>
     </div>
     
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item active" onclick="showHome()">
+                <div class="nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="nav-label">Home</div>
+            </a>
+            <a href="#" class="nav-item" onclick="showAirdrops()">
+                <div class="nav-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="nav-label">Airdrops</div>
+            </a>
+            <a href="#" class="nav-item" onclick="showTasks()">
+                <div class="nav-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="nav-label">Tasks</div>
+            </a>
+            <a href="#" class="nav-item" onclick="showWallet()">
+                <div class="nav-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="nav-label">Wallet</div>
+            </a>
+            <a href="#" class="nav-item" onclick="showProfile()">
+                <div class="nav-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="nav-label">Profile</div>
+            </a>
+        </div>
+    </div>
+    
     <script>
         // Intersection Observer for scroll animations
         const observerOptions = {
@@ -513,6 +605,42 @@ MAIN_HTML = """
             } catch (error) {
                 alert(`❌ Network error: ${error.message}`);
             }
+        }
+
+        // Navigation Functions
+        function showHome() {
+            setActiveNav('home');
+            alert('🏠 Home page - Main dashboard');
+        }
+
+        function showAirdrops() {
+            setActiveNav('airdrops');
+            alert('🎁 Airdrops page - Browse available airdrops');
+        }
+
+        function showTasks() {
+            setActiveNav('tasks');
+            alert('📋 Tasks page - Manage your tasks');
+        }
+
+        function showWallet() {
+            setActiveNav('wallet');
+            alert('💰 Wallet page - Manage your wallets');
+        }
+
+        function showProfile() {
+            setActiveNav('profile');
+            alert('👤 Profile page - Your account settings');
+        }
+
+        function setActiveNav(page) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.target.closest('.nav-item').classList.add('active');
         }
 
         // Feature Functions
