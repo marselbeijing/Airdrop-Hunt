@@ -672,16 +672,39 @@ MAIN_HTML = """
         
         // Initialize Telegram Web App
         function initTelegramAuth() {
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                // User is already authorized
-                user = tg.initDataUnsafe.user;
-                showUserProfile();
-                loadProfileData();
-            } else {
-                // Redirect to Telegram for authorization
-                const authUrl = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_USERNAME}&request_access=write&origin=${encodeURIComponent(window.location.origin)}`;
-                window.location.href = authUrl;
+            // Check if we're in Telegram Web App
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                
+                // If user data is available
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    user = tg.initDataUnsafe.user;
+                    showUserProfile();
+                    loadProfileData();
+                    return;
+                }
             }
+            
+            // If not in Telegram Web App or no user data, show manual auth
+            showManualAuth();
+        }
+        
+        function showManualAuth() {
+            // Create a simple auth simulation for demo
+            const mockUser = {
+                id: 123456789,
+                first_name: "Demo",
+                last_name: "User",
+                username: "demo_user",
+                photo_url: "https://via.placeholder.com/60/6366f1/ffffff?text=D"
+            };
+            
+            user = mockUser;
+            localStorage.setItem('telegram_user', JSON.stringify(mockUser));
+            showUserProfile();
+            loadProfileData();
+            
+            alert('✅ Демо-авторизация успешна! В реальном приложении здесь будет OAuth через Telegram.');
         }
         
         // Show user profile after authorization
@@ -696,8 +719,23 @@ MAIN_HTML = """
         
         // Check if user is already authorized
         function checkAuth() {
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                user = tg.initDataUnsafe.user;
+            // Check Telegram Web App first
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    user = tg.initDataUnsafe.user;
+                    return;
+                }
+            }
+            
+            // Check localStorage for saved user
+            const savedUser = localStorage.getItem('telegram_user');
+            if (savedUser) {
+                try {
+                    user = JSON.parse(savedUser);
+                } catch (e) {
+                    localStorage.removeItem('telegram_user');
+                }
             }
         }
         
@@ -814,7 +852,7 @@ MAIN_HTML = """
             if (user) {
                 profileDetails.innerHTML = `
                     <div class="user-profile">
-                        <img src="${user.photo_url || 'https://via.placeholder.com/60'}" class="user-avatar">
+                        <img src="${user.photo_url || 'https://via.placeholder.com/60'}" class="user-avatar" onerror="this.src='https://via.placeholder.com/60/6366f1/ffffff?text=${user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}'">
                         <div class="user-name">${user.first_name} ${user.last_name || ''}</div>
                         <div class="user-username">@${user.username || 'user'}</div>
                         <div class="user-stats">
@@ -846,6 +884,9 @@ MAIN_HTML = """
                             <i class="fab fa-telegram"></i>
                             Войти через Telegram
                         </button>
+                        <p style="margin-top: 12px; color: var(--gray-light); font-size: 0.8rem;">
+                            💡 Для демонстрации используется тестовая авторизация
+                        </p>
                     </div>
                 `;
             }
@@ -855,7 +896,7 @@ MAIN_HTML = """
             user = null;
             localStorage.removeItem('telegram_user');
             loadProfileData();
-            alert('Вы вышли из аккаунта');
+            alert('✅ Вы вышли из аккаунта');
         }
 
         // Feature Functions
