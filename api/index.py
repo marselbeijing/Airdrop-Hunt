@@ -538,7 +538,7 @@ MAIN_HTML = """
                 
                 <div class="stat-card" onclick="getAirdrops()" style="cursor: pointer;">
                     <div class="stat-icon">
-                        <i class="fas fa-robot"></i>
+                        <i class="fas fa-tasks"></i>
                     </div>
                     <div class="stat-title">Auto Tasks</div>
                     <div class="stat-desc">Complete without user input</div>
@@ -546,7 +546,7 @@ MAIN_HTML = """
                 
                 <div class="stat-card" onclick="showMonetization()" style="cursor: pointer;">
                     <div class="stat-icon">
-                        <i class="fas fa-coins"></i>
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
                     <div class="stat-title">Monetization</div>
                     <div class="stat-desc">Premium & $HUNT token</div>
@@ -554,7 +554,7 @@ MAIN_HTML = """
                 
                 <div class="stat-card" onclick="showRanking()" style="cursor: pointer;">
                     <div class="stat-icon">
-                        <i class="fas fa-trophy"></i>
+                        <i class="fas fa-medal"></i>
                     </div>
                     <div class="stat-title">Ranking</div>
                     <div class="stat-desc">Leaderboard & rewards</div>
@@ -573,7 +573,7 @@ MAIN_HTML = """
                 
                 <div class="feature-card" onclick="showSecurity()" style="cursor: pointer;">
                     <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <i class="fas fa-lock"></i>
                     </div>
                     <div class="feature-title">Security First</div>
                     <div class="feature-desc">PGP encryption, captcha, and usage limits</div>
