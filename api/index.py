@@ -614,6 +614,156 @@ MAIN_HTML = """
             </div>
         </div>
         
+        <!-- Airdrops Content -->
+        <div id="airdrops-content" class="content-section">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-gift"></i>
+                    Airdrops
+                </div>
+            </div>
+            
+            <div id="airdrops-list">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="parseAirdrops()">
+                        <i class="fas fa-sync"></i>
+                        Parse New Airdrops
+                    </button>
+                </div>
+                
+                <div id="airdrops-container">
+                    <!-- Airdrops will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tasks Content -->
+        <div id="tasks-content" class="content-section">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-tasks"></i>
+                    Tasks
+                </div>
+            </div>
+            
+            <div id="tasks-list">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-title">Completed</div>
+                        <div class="stat-desc">25 tasks done</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-desc">8 tasks waiting</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-title">Rewards</div>
+                        <div class="stat-desc">450 $HUNT earned</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-title">Ranking</div>
+                        <div class="stat-desc">Top 15%</div>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showActiveTasks()">
+                        <i class="fas fa-list"></i>
+                        Active Tasks
+                    </button>
+                    <button class="btn btn-secondary" onclick="showCompletedTasks()">
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wallet Content -->
+        <div id="wallet-content" class="content-section">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    Wallet
+                </div>
+            </div>
+            
+            <div id="wallet-details">
+                <div class="user-profile">
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">$HUNT</div>
+                            <div class="stat-label">450 tokens</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">ETH</div>
+                            <div class="stat-label">0.025 ETH</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card" onclick="connectWallet('ethereum')">
+                        <div class="feature-icon">
+                            <i class="fab fa-ethereum"></i>
+                        </div>
+                        <div class="feature-title">Ethereum</div>
+                        <div class="feature-desc">Connect MetaMask</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="connectWallet('ton')">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="feature-title">TON</div>
+                        <div class="feature-desc">Connect TON Wallet</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="connectWallet('solana')">
+                        <div class="feature-icon">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <div class="feature-title">Solana</div>
+                        <div class="feature-desc">Connect Phantom</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="showSecurity()">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-title">Security</div>
+                        <div class="feature-desc">PGP encryption</div>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="withdrawTokens()">
+                        <i class="fas fa-arrow-up"></i>
+                        Withdraw
+                    </button>
+                    <button class="btn btn-secondary" onclick="showTransactionHistory()">
+                        <i class="fas fa-history"></i>
+                        History
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Profile Content -->
         <div id="profile-content" class="content-section">
             <div class="header">
@@ -808,17 +958,18 @@ MAIN_HTML = """
 
         function showAirdrops() {
             setActiveNav('airdrops');
-            alert('🎁 Airdrops page - Browse available airdrops');
+            showContent('airdrops-content');
+            loadAirdrops();
         }
 
         function showTasks() {
             setActiveNav('tasks');
-            alert('📋 Tasks page - Manage your tasks');
+            showContent('tasks-content');
         }
 
         function showWallet() {
             setActiveNav('wallet');
-            alert('💰 Wallet page - Manage your wallets');
+            showContent('wallet-content');
         }
 
         function showProfile() {
@@ -897,6 +1048,72 @@ MAIN_HTML = """
             localStorage.removeItem('telegram_user');
             loadProfileData();
             alert('✅ Вы вышли из аккаунта');
+        }
+
+        // Airdrops Functions
+        function loadAirdrops() {
+            const container = document.getElementById('airdrops-container');
+            container.innerHTML = `
+                <div class="features-grid">
+                    <div class="feature-card" onclick="executeAirdrop(1)">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="feature-title">Example Airdrop</div>
+                        <div class="feature-desc">100 tokens reward</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="executeAirdrop(2)">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="feature-title">Test Airdrop</div>
+                        <div class="feature-desc">50 tokens reward</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="executeAirdrop(3)">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="feature-title">Demo Airdrop</div>
+                        <div class="feature-desc">75 tokens reward</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="executeAirdrop(4)">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="feature-title">Sample Airdrop</div>
+                        <div class="feature-desc">200 tokens reward</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function executeAirdrop(id) {
+            alert(`🚀 Выполняем аирдроп #${id}...\n✅ Задание выполнено! +100 $HUNT`);
+        }
+
+        // Tasks Functions
+        function showActiveTasks() {
+            alert('📋 Активные задания:\n• Follow Twitter account\n• Join Telegram channel\n• Register on website');
+        }
+
+        function showCompletedTasks() {
+            alert('✅ Выполненные задания:\n• 25 tasks completed\n• 450 $HUNT earned');
+        }
+
+        // Wallet Functions
+        function connectWallet(type) {
+            alert(`🔗 Подключение ${type} кошелька...\n✅ Кошелек подключен!`);
+        }
+
+        function withdrawTokens() {
+            alert('💰 Вывод токенов:\n• Минимум: 100 $HUNT\n• Комиссия: 2%');
+        }
+
+        function showTransactionHistory() {
+            alert('📊 История транзакций:\n• +100 $HUNT (airdrop)\n• +50 $HUNT (task)\n• -25 $HUNT (withdrawal)');
         }
 
         // Feature Functions
