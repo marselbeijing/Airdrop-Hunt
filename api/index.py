@@ -339,6 +339,126 @@ MAIN_HTML = """
             margin: 25px 0;
         }
         
+        /* Airdrops Section */
+        .airdrops-section {
+            margin-top: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .loading-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-light);
+        }
+        
+        .loading-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .airdrops-grid {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .airdrop-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-dark);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .airdrop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .airdrop-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+            margin: 0;
+        }
+        
+        .blockchain-tag {
+            background: var(--primary);
+            color: var(--white);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .airdrop-desc {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .airdrop-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .difficulty {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .difficulty.easy {
+            background: var(--success);
+            color: var(--white);
+        }
+        
+        .difficulty.medium {
+            background: var(--warning);
+            color: var(--white);
+        }
+        
+        .difficulty.hard {
+            background: var(--danger);
+            color: var(--white);
+        }
+        
+        .reward {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .airdrop-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .airdrop-actions .btn {
+            flex: 1;
+            font-size: 0.8rem;
+            padding: 8px 12px;
+        }
+        
         .btn {
             flex: 1;
             display: flex;
@@ -596,16 +716,27 @@ MAIN_HTML = """
                 </div>
             </div>
             
+            <!-- Real Airdrops Container -->
+            <div id="airdrops-container" class="airdrops-section scroll-animate">
+                <div class="section-header">
+                    <h3>🔥 Latest Airdrops</h3>
+                    <button class="btn btn-secondary" onclick="loadRealAirdrops()">
+                        <i class="fas fa-sync"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading real airdrops...</p>
+                </div>
+            </div>
+            
             <!-- Action Buttons -->
             <div class="btn-group scroll-animate">
-                <a href="/api/airdrops" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-list"></i>
-                    View Airdrops
-                </a>
-                <a href="/api/parse-airdrops" class="btn btn-secondary" onclick="parseAirdrops()">
+                <button class="btn btn-primary" onclick="parseAirdrops()">
                     <i class="fas fa-sync"></i>
-                    Parse New
-                </a>
+                    Parse New Airdrops
+                </button>
             </div>
             
             <!-- Footer -->
@@ -766,7 +897,7 @@ MAIN_HTML = """
                 
                 if (data.status === 'success') {
                     alert(`✅ ${data.message}`);
-                    getAirdrops();
+                    loadRealAirdrops();
                 } else {
                     alert(`❌ Error: ${data.message}`);
                 }
@@ -781,13 +912,58 @@ MAIN_HTML = """
                 const data = await response.json();
                 
                 if (data.status === 'success') {
-                    alert(`Found ${data.airdrops.length} airdrops!`);
+                    displayAirdrops(data.airdrops);
                 } else {
                     alert(`❌ Error: ${data.message}`);
                 }
             } catch (error) {
                 alert(`❌ Network error: ${error.message}`);
             }
+        }
+
+        async function loadRealAirdrops() {
+            try {
+                const response = await fetch('/api/airdrops');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayAirdrops(data.airdrops);
+                }
+            } catch (error) {
+                console.error('Error loading airdrops:', error);
+            }
+        }
+
+        function displayAirdrops(airdrops) {
+            const airdropsContainer = document.getElementById('airdrops-container');
+            if (!airdropsContainer) return;
+            
+            let html = '<div class="airdrops-grid">';
+            
+            airdrops.forEach(airdrop => {
+                html += `
+                    <div class="airdrop-card">
+                        <div class="airdrop-header">
+                            <h3>${airdrop.title}</h3>
+                            <span class="blockchain-tag">${airdrop.blockchain}</span>
+                        </div>
+                        <p class="airdrop-desc">${airdrop.description}</p>
+                        <div class="airdrop-meta">
+                            <span class="difficulty ${airdrop.difficulty.toLowerCase()}">${airdrop.difficulty}</span>
+                            <span class="reward">${airdrop.reward}</span>
+                        </div>
+                        <div class="airdrop-actions">
+                            <a href="${airdrop.referral_link}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i>
+                                Participate
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            airdropsContainer.innerHTML = html;
         }
 
         // Navigation Functions
@@ -914,6 +1090,7 @@ MAIN_HTML = """
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
+            loadRealAirdrops(); // Загружаем реальные аирдропы
         });
     </script>
 </body>
@@ -931,31 +1108,75 @@ async def health_check():
 @app.get("/api/airdrops")
 async def get_airdrops():
     """Получить список аирдропов"""
-    return {
-        "status": "success", 
-        "airdrops": [
-            {
-                "id": 1,
-                "title": "Example Airdrop",
-                "description": "Test airdrop for demonstration",
-                "source_url": "https://example.com",
-                "referral_link": "https://example.com?ref=airdrophunter",
-                "blockchain": "Ethereum",
-                "difficulty": "Easy",
+    try:
+        # Импортируем функции парсинга
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+        
+        from airdrop_parser import fetch_all_airdrops
+        
+        # Получаем реальные аирдропы
+        airdrops = fetch_all_airdrops()
+        
+        # Форматируем для API
+        formatted_airdrops = []
+        for i, airdrop in enumerate(airdrops[:20]):  # Ограничиваем 20 аирдропами
+            formatted_airdrops.append({
+                "id": i + 1,
+                "title": airdrop.get("title", "Unknown Airdrop"),
+                "description": airdrop.get("description", "No description available"),
+                "source_url": airdrop.get("source_url", "#"),
+                "referral_link": airdrop.get("referral_link", airdrop.get("source_url", "#")),
+                "blockchain": airdrop.get("blockchain", "Unknown"),
+                "difficulty": airdrop.get("difficulty", "Medium"),
                 "status": "new",
-                "reward": "100 tokens",
+                "reward": airdrop.get("reward", "Unknown reward"),
                 "is_moderated": True
-            }
-        ]
-    }
+            })
+        
+        return {
+            "status": "success",
+            "message": f"Found {len(formatted_airdrops)} real airdrops",
+            "airdrops": formatted_airdrops
+        }
+    except Exception as e:
+        print(f"Error fetching airdrops: {e}")
+        return {
+            "status": "error",
+            "message": f"Failed to fetch airdrops: {str(e)}",
+            "airdrops": []
+        }
 
 @app.post("/api/parse-airdrops")
 async def parse_airdrops():
     """Запустить парсинг новых аирдропов"""
-    return {
-        "status": "success",
-        "message": "Successfully parsed and saved 3 new airdrops!"
-    }
+    try:
+        # Импортируем функции парсинга
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+        
+        from airdrop_parser import fetch_all_airdrops, save_airdrops_to_database
+        
+        # Получаем реальные аирдропы
+        airdrops = fetch_all_airdrops()
+        
+        # Сохраняем в базу данных
+        saved_count = save_airdrops_to_database(airdrops)
+        
+        return {
+            "status": "success",
+            "message": f"Successfully parsed and saved {saved_count} new airdrops!",
+            "total_found": len(airdrops),
+            "saved_count": saved_count
+        }
+    except Exception as e:
+        print(f"Error parsing airdrops: {e}")
+        return {
+            "status": "error",
+            "message": f"Failed to parse airdrops: {str(e)}"
+        }
 
 @app.get("/api/auth/telegram")
 async def telegram_auth():
