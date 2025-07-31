@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import os
+import requests
+import json
+from urllib.parse import urlencode
 
 app = FastAPI()
+
+# Telegram Bot API конфигурация
+TELEGRAM_BOT_TOKEN = "8399460650:AAGa6PBJa1hTw1dPV-kyMR5GeQYOGbdraiE"
+TELEGRAM_BOT_USERNAME = "airdrophunter_bot"  # Замените на ваш username бота
 
 # HTML шаблон для главной страницы
 MAIN_HTML = """
@@ -16,6 +23,7 @@ MAIN_HTML = """
     <title>Airdrop Hunter - Crypto Hunter</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -151,6 +159,93 @@ MAIN_HTML = """
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
+        }
+        
+        /* Auth Section */
+        .auth-section {
+            background: var(--glass-dark);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid var(--glass-dark);
+        }
+        
+        .auth-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .user-profile {
+            display: none;
+            background: var(--glass-dark);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--glass-dark);
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: block;
+            border: 3px solid var(--primary);
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .user-username {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        
+        .user-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .stat-item {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-light);
+            margin-top: 4px;
         }
         
         /* Stats Grid */
@@ -401,12 +496,21 @@ MAIN_HTML = """
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Content sections */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Home Content -->
-        <div id="home-content" class="content-section">
+        <div id="home-content" class="content-section active">
             <!-- Header -->
             <div class="header loading">
                 <div class="logo">
@@ -417,6 +521,35 @@ MAIN_HTML = """
                 <div class="status-badge">
                     <i class="fas fa-check-circle"></i>
                     Bot Online
+                </div>
+            </div>
+            
+            <!-- Auth Section -->
+            <div id="auth-section" class="auth-section">
+                <h3>🔐 Авторизация через Telegram</h3>
+                <p style="margin: 12px 0; color: var(--gray-light); font-size: 0.9rem;">
+                    Войдите через Telegram для доступа к полному функционалу
+                </p>
+                <a href="#" class="auth-button" onclick="initTelegramAuth()">
+                    <i class="fab fa-telegram"></i>
+                    Войти через Telegram
+                </a>
+            </div>
+            
+            <!-- User Profile -->
+            <div id="user-profile" class="user-profile">
+                <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+                <div id="user-name" class="user-name"></div>
+                <div id="user-username" class="user-username"></div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="user-rating">0</div>
+                        <div class="stat-label">Рейтинг</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="user-tokens">0</div>
+                        <div class="stat-label">$HUNT</div>
+                    </div>
                 </div>
             </div>
             
@@ -507,6 +640,20 @@ MAIN_HTML = """
                 <p>&copy; 2024 Airdrop Hunter. All rights reserved.</p>
             </div>
         </div>
+        
+        <!-- Profile Content -->
+        <div id="profile-content" class="content-section">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </div>
+            </div>
+            
+            <div id="profile-details">
+                <!-- Profile content will be loaded here -->
+            </div>
+        </div>
     </div>
     
     <!-- Bottom Navigation Bar -->
@@ -546,6 +693,48 @@ MAIN_HTML = """
     </div>
     
     <script>
+        // Telegram Web App initialization
+        let tg = window.Telegram.WebApp;
+        let user = null;
+        
+        // Initialize Telegram Web App
+        function initTelegramAuth() {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                // User is already authorized
+                user = tg.initDataUnsafe.user;
+                showUserProfile();
+            } else {
+                // Redirect to Telegram for authorization
+                const authUrl = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_USERNAME}&request_access=write&origin=${encodeURIComponent(window.location.origin)}`;
+                window.location.href = authUrl;
+            }
+        }
+        
+        // Show user profile after authorization
+        function showUserProfile() {
+            if (user) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('user-profile').style.display = 'block';
+                
+                // Update user info
+                document.getElementById('user-avatar').src = user.photo_url || 'https://via.placeholder.com/60';
+                document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+                document.getElementById('user-username').textContent = '@' + (user.username || 'user');
+                
+                // Update stats (mock data for now)
+                document.getElementById('user-rating').textContent = '1250';
+                document.getElementById('user-tokens').textContent = '450';
+            }
+        }
+        
+        // Check if user is already authorized
+        function checkAuth() {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                user = tg.initDataUnsafe.user;
+                showUserProfile();
+            }
+        }
+        
         // Intersection Observer for scroll animations
         const observerOptions = {
             threshold: 0.1,
@@ -610,7 +799,7 @@ MAIN_HTML = """
         // Navigation Functions
         function showHome() {
             setActiveNav('home');
-            alert('🏠 Home page - Main dashboard');
+            showContent('home-content');
         }
 
         function showAirdrops() {
@@ -630,7 +819,18 @@ MAIN_HTML = """
 
         function showProfile() {
             setActiveNav('profile');
-            alert('👤 Profile page - Your account settings');
+            showContent('profile-content');
+            loadProfileData();
+        }
+
+        function showContent(contentId) {
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(contentId).classList.add('active');
         }
 
         function setActiveNav(page) {
@@ -641,6 +841,53 @@ MAIN_HTML = """
             
             // Add active class to clicked item
             event.target.closest('.nav-item').classList.add('active');
+        }
+
+        function loadProfileData() {
+            const profileDetails = document.getElementById('profile-details');
+            if (user) {
+                profileDetails.innerHTML = `
+                    <div class="user-profile">
+                        <img src="${user.photo_url || 'https://via.placeholder.com/60'}" class="user-avatar">
+                        <div class="user-name">${user.first_name} ${user.last_name || ''}</div>
+                        <div class="user-username">@${user.username || 'user'}</div>
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">1250</div>
+                                <div class="stat-label">Рейтинг</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">450</div>
+                                <div class="stat-label">$HUNT</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Выйти
+                        </button>
+                    </div>
+                `;
+            } else {
+                profileDetails.innerHTML = `
+                    <div class="auth-section">
+                        <h3>🔐 Авторизация через Telegram</h3>
+                        <p>Войдите через Telegram для доступа к профилю</p>
+                        <button class="auth-button" onclick="initTelegramAuth()">
+                            <i class="fab fa-telegram"></i>
+                            Войти через Telegram
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function logout() {
+            user = null;
+            localStorage.removeItem('telegram_user');
+            showHome();
+            alert('Вы вышли из аккаунта');
         }
 
         // Feature Functions
@@ -667,6 +914,11 @@ MAIN_HTML = """
         function showRanking() {
             alert('🏆 Leaderboard and ranking system coming soon!');
         }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
     </script>
 </body>
 </html>
@@ -707,4 +959,9 @@ async def parse_airdrops():
     return {
         "status": "success",
         "message": "Successfully parsed and saved 3 new airdrops!"
-    } 
+    }
+
+@app.get("/api/auth/telegram")
+async def telegram_auth():
+    """Telegram OAuth callback"""
+    return {"status": "success", "message": "Telegram auth callback"} 
