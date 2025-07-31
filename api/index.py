@@ -459,6 +459,22 @@ MAIN_HTML = """
             padding: 8px 12px;
         }
         
+        .error-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--danger);
+        }
+        
+        .error-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .error-placeholder p {
+            margin-bottom: 15px;
+            color: var(--gray-light);
+        }
+        
         .btn {
             flex: 1;
             display: flex;
@@ -923,20 +939,60 @@ MAIN_HTML = """
 
         async function loadRealAirdrops() {
             try {
+                const airdropsContainer = document.getElementById('airdrops-container');
+                if (airdropsContainer) {
+                    // Показываем loading
+                    airdropsContainer.innerHTML = `
+                        <div class="loading-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading real airdrops...</p>
+                        </div>
+                    `;
+                }
+                
                 const response = await fetch('/api/airdrops');
                 const data = await response.json();
                 
                 if (data.status === 'success') {
                     displayAirdrops(data.airdrops);
+                } else {
+                    console.error('API Error:', data.message);
+                    showError('Failed to load airdrops');
                 }
             } catch (error) {
                 console.error('Error loading airdrops:', error);
+                showError('Network error loading airdrops');
+            }
+        }
+
+        function showError(message) {
+            const airdropsContainer = document.getElementById('airdrops-container');
+            if (airdropsContainer) {
+                airdropsContainer.innerHTML = `
+                    <div class="error-placeholder">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>${message}</p>
+                        <button class="btn btn-secondary" onclick="loadRealAirdrops()">
+                            <i class="fas fa-refresh"></i>
+                            Retry
+                        </button>
+                    </div>
+                `;
             }
         }
 
         function displayAirdrops(airdrops) {
             const airdropsContainer = document.getElementById('airdrops-container');
-            if (!airdropsContainer) return;
+            if (!airdropsContainer) {
+                console.error('Airdrops container not found');
+                return;
+            }
+            
+            // Убираем loading placeholder
+            const loadingPlaceholder = airdropsContainer.querySelector('.loading-placeholder');
+            if (loadingPlaceholder) {
+                loadingPlaceholder.remove();
+            }
             
             let html = '<div class="airdrops-grid">';
             
@@ -964,6 +1020,8 @@ MAIN_HTML = """
             
             html += '</div>';
             airdropsContainer.innerHTML = html;
+            
+            console.log(`✅ Отображено ${airdrops.length} аирдропов`);
         }
 
         // Navigation Functions
